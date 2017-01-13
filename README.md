@@ -1,5 +1,5 @@
 [![Build Status](https://travis-ci.org/danvaida/ansible-roles-coreos-bootstrap.svg?branch=master)](https://travis-ci.org/danvaida/ansible-roles-coreos-bootstrap)
-[![Galaxy](https://img.shields.io/ansible/role/3078.svg)](https://galaxy.ansible.com/danvaida/coreos-bootstrap/)
+[![Galaxy](https://img.shields.io/ansible/role/14882.svg)](https://galaxy.ansible.com/danvaida/coreos-bootstrap/)
 
 # Ansible coreos-bootstrap role
 
