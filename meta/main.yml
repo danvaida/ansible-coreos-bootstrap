@@ -1,10 +1,15 @@
 ---
 dependencies: []
-
 galaxy_info:
-  author: defunctzombie
-  description: "bootstrap coreos hosts to run ansible"
-  license: "MIT"
-  min_ansible_version: 1.4
-  categories:
+  author: Dan Vaida
+  description: Installs PyPy and pip to have Ansible manage CoreOS hosts
+  license: BSD
+  min_ansible_version: 2.2
+  platforms:
+    - name: CoreOS
+      versions:
+        - all
+  galaxy_tags:
     - system
+    - coreos
+    - container
