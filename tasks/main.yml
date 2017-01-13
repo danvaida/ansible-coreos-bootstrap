@@ -1,31 +1,35 @@
-- name: Check if bootstrap is needed
-  raw: stat $HOME/.bootstrapped
-  register: need_bootstrap
-  ignore_errors: True
+---
+- include: bootstrap.yml
+  tags:
+    - bootstrap
+    - pypy
 
-- name: Run bootstrap.sh
-  script: bootstrap.sh
-  when: need_bootstrap | failed
+- set_fact:
+    ansible_python_interpreter: "{{ coreos_bootstrap_dir }}/python"
 
-- name: Check if we need to install pip
-  shell: "{{ansible_python_interpreter}} -m pip --version"
-  register: need_pip
-  ignore_errors: True
-  changed_when: false
-  when: need_bootstrap | failed
+- block:
 
-- name: Copy get-pip.py
-  copy: src=get-pip.py dest=~/get-pip.py
-  when: need_pip | failed
+    - name: Check if we need to install pip
+      shell: "{{ ansible_python_interpreter }} -m pip --version"
+      register: coreos_python_pip_check
+      changed_when: False
 
-- name: Install pip
-  shell: "{{ansible_python_interpreter}} ~/get-pip.py"
-  when: need_pip | failed
+  tags:
+    - pip
 
-- name: Remove get-pip.py
-  file: path=~/get-pip.py state=absent
-  when: need_pip | failed
+  rescue:
 
-- name: Install pip launcher
-  copy: src=runner dest=~/bin/pip mode=0755
-  when: need_pip | failed
+    - name: Download pip installer
+      get_url:
+        url: "{{ coreos_bootstrap_pip_download_link }}"
+        dest: "{{ coreos_bootstrap_pip_download_dest }}"
+
+    - name: Install pip
+      shell:
+        "{{ ansible_python_interpreter }} \
+         {{ coreos_bootstrap_pip_download_dest }}/{{ coreos_bootstrap_pip_download_file }}"
+
+    - name: Remove pip installer
+      file:
+        path: "{{ coreos_bootstrap_pip_download_dest }}/{{ coreos_bootstrap_pip_download_file }}"
+        state: absent

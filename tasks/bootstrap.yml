@@ -1,0 +1,54 @@
+---
+- block:
+
+    - name: Check if python is already installed
+      raw: 'python --version'
+      check_mode: False
+      changed_when: False
+
+  rescue:
+
+    - name: Create bootstrap directory
+      raw: "mkdir -p {{ coreos_bootstrap_dir }}/pypy"
+
+    - name: Download PyPy
+      raw:
+        "wget -O {{ coreos_bootstrap_pypy_download_dest }}/{{ coreos_bootstrap_pypy_download_file }} \
+         {{ coreos_bootstrap_pypy_download_link }}"
+
+    - name: Extract PyPy
+      raw:
+        "tar xjf {{ coreos_bootstrap_pypy_download_dest }}/{{ coreos_bootstrap_pypy_download_file }} \
+         -C {{ coreos_bootstrap_dir }}/pypy \
+         --strip-components 1"
+
+    - name: Make PyPy lib directory and link ncurses .so
+      raw:
+        "mkdir -p {{ coreos_bootstrap_dir }}/pypy/lib && \
+         ln -snf /lib64/libncurses.so.5.9 {{ coreos_bootstrap_dir }}/pypy/lib/libtinfo.so.5"
+
+    - name: Add python exec script to bootstrap directory
+      raw: >
+        printf "%s\n%s"
+        "#!/bin/bash"
+        "LD_LIBRARY_PATH={{ coreos_bootstrap_dir }}/pypy/lib:\$LD_LIBRARY_PATH exec {{ coreos_bootstrap_dir }}/pypy/bin/pypy \"\$@\""
+        > {{ coreos_bootstrap_dir }}/python
+
+    - name: Add exec permission to python exec script
+      raw: "chmod +x {{ coreos_bootstrap_dir }}/python"
+
+    - name: Check python executable linkage
+      raw: "{{ coreos_bootstrap_dir }}/python --version"
+      changed_when: False
+
+    - name: Add opt-path.sh to profile.d for adding python exec PATH
+      raw: >
+        printf "%s\n%s"
+        "#!/usr/bin/bash"
+        "PATH=\$PATH:{{ coreos_bootstrap_bin_dir }}"
+        > /etc/profile.d/opt-path.sh
+
+    - name: Change permissions and ownership for opt-path.sh to run as root
+      raw:
+        'chmod 0755 /etc/profile.d/opt-path.sh &&
+         chown root /etc/profile.d/opt-path.sh'

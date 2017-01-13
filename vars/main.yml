@@ -1,0 +1,8 @@
+---
+coreos_bootstrap_pypy_download_url:  'https://bitbucket.org/pypy/pypy/downloads'
+coreos_bootstrap_pypy_download_file: "pypy2-v{{ coreos_bootstrap_pypy_version }}-linux64.tar.bz2"
+coreos_bootstrap_pypy_download_link: "{{ coreos_bootstrap_pypy_download_url }}/{{ coreos_bootstrap_pypy_download_file }}"
+
+coreos_bootstrap_pip_download_url:  'https://bootstrap.pypa.io'
+coreos_bootstrap_pip_download_file: 'get-pip.py'
+coreos_bootstrap_pip_download_link: "{{ coreos_bootstrap_pip_download_url }}/{{ coreos_bootstrap_pip_download_file }}"
