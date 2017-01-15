@@ -5,6 +5,8 @@
 
 In order to effectively run Ansible, the target machine needs to have a python interpreter. CoreOS machines are minimal and do not ship with any version of python. To get around this limitation we can install [pypy](http://pypy.org/), a lightweight python interpreter. The coreos-bootstrap role will install pypy and pip for us.
 
+The recommended way of configuring your CoreOS boxes is through [Cloud-Config](https://coreos.com/os/docs/latest/cloud-config.html)
+
 ## Requirements
 
 n/a
@@ -17,9 +19,6 @@ n/a
 
 * __coreos_bootstrap_dir:__
   Dir path to where PyPy will be put.
-
-* __coreos_bootstrap_bin_dir:__
-  Dir path to other system binaries.
 
 * __coreos_bootstrap_pypy_version:__
   What version of PyPy to download and install. Can be >= 5.3.0 or <= 5.6.0
@@ -38,6 +37,14 @@ n/a
       become: True
       roles:
         - danvaida.coreos-bootstrap
+
+If you need to override the Python interpreter that Ansible uses, and want to do so also for ad-hoc commands, one way of doing it is by adding the following block to your inventory file:
+
+    [coreos:vars]
+    ansible_user=core
+    ansible_python_interpreter="/opt/bin/python"
+
+Make sure the path to the interpreter is based on the `coreos_bootstrap_dir` var.
 
 ## Testing
 
