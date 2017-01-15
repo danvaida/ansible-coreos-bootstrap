@@ -45,7 +45,7 @@
       raw: >
         printf "%s\n%s"
         "#!/usr/bin/bash"
-        "PATH=\$PATH:{{ coreos_bootstrap_bin_dir }}"
+        "PATH=\$PATH:{{ coreos_bootstrap_dir }}"
         > /etc/profile.d/opt-path.sh
 
     - name: Change permissions and ownership for opt-path.sh to run as root
